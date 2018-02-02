@@ -19,11 +19,16 @@ from django.views.generic import TemplateView
 
 from profiles.views import HomeView
 
+from profiles.views import register, login_view, logout_view
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view()),
     url(r'^about/$', TemplateView.as_view(template_name='about.html')),
     url(r'^contact/$', TemplateView.as_view(template_name='contact.html')),
+    url(r'^register/$', register),
+    url(r'^login/$', login_view),
+    url(r'^logout/$', logout_view),
   #  url(r'^$', home),
   #  url(r'^contact/$', ContactTemplateView.as_view()),
   #  url(r'^contact/(?P<id>\d+)/$', ContactView.as_view()),

@@ -1,11 +1,15 @@
 import random
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.contrib.auth import get_user_model, login , logout
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
 
 from django.views import View
 
+from .forms import UserCreationForm, UserLoginForm
+
+User = get_user_model()
 
 # Create your views here.
 
@@ -14,8 +18,27 @@ from django.views import View
 # 		context = {}
 # 		return render(request, 'index.html', context)
 
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect("/login")
 
 
+def login_view(request,*args,**kwargs):
+    form = UserLoginForm(request.POST or None)
+    if form.is_valid():
+        user_obj = form.cleaned_data.get('user_obj')
+        #user_obj =  User.objects.get(username__iexact=query)
+        login(request, user_obj) # logging in part, validation is done on UserLoginForm
+        return HttpResponseRedirect("/")
+    return render(request, "registration/login.html", {"form": form})
+
+
+def register(request, *args, **kwargs):
+    form = UserCreationForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect("/login")
+    return render(request, "registration/register.html", {"form": form})
 
 
 
