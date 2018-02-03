@@ -5,11 +5,19 @@ from django.contrib.auth.models import (
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save
+from .utils import code_generator
 
 # Create your models here.
 
 
-
+class ActivationProfile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    key = models.CharField(max_length=120)
+    expired = models.BooleanField(default=False)
+    
+    def save(self, *args, **kwargs):
+        self.key = code_generator()
+        super(ActivationProfile, self).save(*args,**kwargs)
 
 
 class MyUserManager(BaseUserManager): #base user manager
@@ -102,6 +110,7 @@ class MyUser(AbstractBaseUser): #user model
     #     # Simplest possible answer: All admins are staff
     #     return self.is_admin
 
+#this only creates a new profile when we create a new user
 class Profile(models.Model):
 	user 		= models.OneToOneField(settings.AUTH_USER_MODEL)
 	first_nm 	= models.CharField(max_length=120,null=True,blank=True)
@@ -117,7 +126,8 @@ class Profile(models.Model):
 def post_save_user_model_receiver(sender, instance, created, *args, **kwargs):
 	if created:
 		try:
-			Profile.objects.create(user=instance)
+                    Profile.objects.create(user=instance)
+                    ActivationProfile.objects.create(user=instance)
 		except:
 			pass
 

@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import UserChangeForm, UserCreationForm
-from .models import MyUser, Profile
+from .models import MyUser, Profile, ActivationProfile
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -39,6 +39,8 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(MyUser, UserAdmin)
 
 admin.site.register(Profile)
+
+admin.site.register(ActivationProfile)
 
 
 

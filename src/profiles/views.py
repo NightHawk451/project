@@ -22,15 +22,22 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect("/login")
 
-
-def login_view(request,*args,**kwargs):
+def login_view(request, *args, **kwargs):
     form = UserLoginForm(request.POST or None)
     if form.is_valid():
         user_obj = form.cleaned_data.get('user_obj')
-        #user_obj =  User.objects.get(username__iexact=query)
-        login(request, user_obj) # logging in part, validation is done on UserLoginForm
+        login(request, user_obj)
         return HttpResponseRedirect("/")
     return render(request, "registration/login.html", {"form": form})
+
+# def login_view(request,*args,**kwargs):
+#     form = UserLoginForm(request.POST or None)
+#     if form.is_valid():
+#         user_obj = form.cleaned_data.get('user_obj')
+#         #user_obj =  User.objects.get(username__iexact=query)
+#         login(request, user_obj) # logging in part, validation is done on UserLoginForm
+#         return HttpResponseRedirect("/")
+#     return render(request, "registration/login.html", {"form": form})
 
 
 def register(request, *args, **kwargs):

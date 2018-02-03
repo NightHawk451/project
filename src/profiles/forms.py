@@ -21,7 +21,7 @@ class UserLoginForm(forms.Form):
         # user_qs2 = User.objects.filter(email__iexact=query)
         # user_qs_final = (user_qs1 | user_qs2).distinct()
         user_qs_final = User.objects.filter(
-            Q(user__iexact=query)|
+            Q(username__iexact=query)|
             Q(email__iexact=query)
             ).distinct()
         if not user_qs_final.exists() and user_qs_final.count() != 1:
@@ -29,6 +29,8 @@ class UserLoginForm(forms.Form):
         user_obj = user_qs_final.first()
         if not user_obj.check_password(password): # checks that password is correct
             raise forms.ValidationError("Invalid credentials")
+        #if not user_obj.is_active:
+        #    raise forms.ValidationError("Inactive User; Please verify your email address.")
         self.cleaned_data["user_obj"] = user_obj
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
@@ -66,6 +68,8 @@ class UserCreationForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        user.is_active = False
+        # create a new user has for activating email.
         if commit:
             user.save()
         return user
